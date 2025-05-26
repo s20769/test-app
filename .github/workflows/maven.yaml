@@ -131,9 +131,8 @@ jobs:
         run: |
           cosign attest \
             --yes \
-            --type spdxjson \
             --predicate sbom.spdx.json \
-            --artifact ${{ env.JAR_PATH }}
+            file://${{ env.JAR_PATH }}
 
 
 
@@ -198,7 +197,6 @@ jobs:
         run: |
           cosign attest \
             --yes \
-            --type spdxjson \
             --predicate sbom.spdx.json \
             s20769/test-app:${{ needs.calculate-version.outputs.version }}
 
