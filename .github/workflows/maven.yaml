@@ -133,7 +133,7 @@ jobs:
             --yes \
             --type spdxjson \
             --predicate sbom.spdx.json \
-            --subject file://${{ env.JAR_PATH }}
+            --artifact ${{ env.JAR_PATH }}
 
 
 
