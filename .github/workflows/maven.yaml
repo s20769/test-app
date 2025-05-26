@@ -103,6 +103,26 @@ jobs:
           name: app
           path: target/*.jar
           retention-days: 10
+      - name: DepCheck
+        uses: dependency-check/Dependency-Check_Action@main
+        env:
+          JAVA_HOME: /opt/jdk
+        id: DepCheck
+        with:
+          project: 'test-app'
+          path: '.'
+          format: 'HTML'
+          out: 'reports'
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+      - name: Upload dependency check results
+        uses: actions/upload-artifact@v3
+        with:
+          name: DepCheck report
+          path: ${{github.workspace}}/reports
+
+
   docker:
     runs-on: ubuntu-latest
     needs: [calculate-version, build]
