@@ -124,11 +124,11 @@ jobs:
           name: sbom-jar
           path: sbom.spdx.json
       - name: Attest SBOM for JAR
-        uses: actions/attest-sbom@latest
+        uses: advanced-security/attest-sbom-action@v1  # Poprawna akcja
         with:
           subject-path: ${{ env.JAR_PATH }}
           sbom-path: sbom.spdx.json
-          sbom-format: spdx
+          sbom-format: spdx-json  # Upewnij się, że format zgadza się z wyjściem Syft
 
 
 
@@ -190,11 +190,11 @@ jobs:
           name: sbom-docker
           path: sbom.spdx.json
       - name: Attest SBOM for Docker image
-        uses: actions/attest-sbom@v1
+        uses: advanced-security/attest-sbom-action@v1  # Poprawna akcja
         with:
           subject-image: s20769/test-app:${{ needs.calculate-version.outputs.version }}
           sbom-path: sbom.spdx.json
-          sbom-format: spdx
+          sbom-format: spdx-json  # Upewnij się, że format zgadza się z wyjściem Syft
 
           
   trigger-deploy:
