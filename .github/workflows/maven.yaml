@@ -193,12 +193,25 @@ jobs:
         with:
           name: sbom-docker
           path: sbom.spdx.json
-      - name: Attest SBOM for Docker (Keyless)
+          
+      - name: Install Cosign
+        run: |
+          curl -sSfL https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64 -o /usr/local/bin/cosign
+          chmod +x /usr/local/bin/cosign
+      - name: Push JAR to GHCR (GitHub Container Registry)
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker buildx create --use
+          docker buildx build --push \
+            --platform linux/amd64 \
+            --tag ghcr.io/${{ github.repository }}/test-app:${{ needs.calculate-version.outputs.version }} \
+            --file Dockerfile .
+      - name: Attest SBOM for JAR (Keyless)
         run: |
           cosign attest \
             --yes \
             --predicate sbom.spdx.json \
-            s20769/test-app:${{ needs.calculate-version.outputs.version }}
+            ghcr.io/${{ github.repository }}/test-app:${{ needs.calculate-version.outputs.version }}
 
           
   trigger-deploy:
