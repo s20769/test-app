@@ -127,14 +127,13 @@ jobs:
         run: |
           curl -sSfL https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64 -o /usr/local/bin/cosign
           chmod +x /usr/local/bin/cosign
-
       - name: Attest SBOM for JAR (Keyless)
         run: |
           cosign attest \
-          --yes \
-          --type spdxjson \
-          --predicate sbom.spdx.json \
-          ${{ env.JAR_PATH }}
+            --yes \
+            --type spdxjson \
+            --predicate sbom.spdx.json \
+            --subject file://${{ env.JAR_PATH }}
 
 
 
@@ -198,10 +197,10 @@ jobs:
       - name: Attest SBOM for Docker (Keyless)
         run: |
           cosign attest \
-          --yes \
-          --type spdxjson \
-          --predicate sbom.spdx.json \
-          s20769/test-app:${{ needs.calculate-version.outputs.version }}
+            --yes \
+            --type spdxjson \
+            --predicate sbom.spdx.json \
+            s20769/test-app:${{ needs.calculate-version.outputs.version }}
 
           
   trigger-deploy:
