@@ -123,6 +123,13 @@ jobs:
         with:
           name: sbom-jar
           path: sbom.spdx.json
+      - name: Attest SBOM for JAR
+        uses: actions/attest-sbom@latest
+        with:
+          subject-path: ${{ env.JAR_PATH }}
+          sbom-path: sbom.spdx.json
+          sbom-format: spdx
+
 
 
       - name: DepCheck
@@ -182,6 +189,12 @@ jobs:
         with:
           name: sbom-docker
           path: sbom.spdx.json
+      - name: Attest SBOM for Docker image
+        uses: actions/attest-sbom@v1
+        with:
+          subject-image: s20769/test-app:${{ needs.calculate-version.outputs.version }}
+          sbom-path: sbom.spdx.json
+          sbom-format: spdx
 
           
   trigger-deploy:
