@@ -107,14 +107,17 @@ jobs:
         id: find-jar
         run: |
           echo "JAR_PATH=$(find target -name '*.jar' | head -n 1)" >> $GITHUB_ENV
+      - name: Debug JAR Path
+        run: |
+          echo "JAR Path: ${{ env.JAR_PATH }}"
       - name: Install Syft
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
       - name: Generate SBOM for JAR
-        uses: anchore/sbom-action@latest
-        with:
-          path: ${{ env.JAR_PATH }}
-          format: spdx-json
+        run: |
+          JAR_PATH=$(realpath $(find target -name '*.jar' | head -n 1))
+          echo "JAR Path: $JAR_PATH"
+          syft file:$JAR_PATH -o spdx-json > sbom.spdx.json
       - name: Upload SBOM (JAR)
         uses: actions/upload-artifact@v4
         with:
