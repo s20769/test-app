@@ -123,12 +123,18 @@ jobs:
         with:
           name: sbom-jar
           path: sbom.spdx.json
-      - name: Attest SBOM for JAR
-        uses: advanced-security/attest-sbom-action@v1  # Poprawna akcja
-        with:
-          subject-path: ${{ env.JAR_PATH }}
-          sbom-path: sbom.spdx.json
-          sbom-format: spdx-json  # Upewnij się, że format zgadza się z wyjściem Syft
+      - name: Install Cosign
+        run: |
+          curl -sSfL https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64 -o /usr/local/bin/cosign
+          chmod +x /usr/local/bin/cosign
+
+      - name: Attest SBOM for JAR (Keyless)
+        run: |
+          cosign attest \
+          --yes \
+          --type spdxjson \
+          --predicate sbom.spdx.json \
+          ${{ env.JAR_PATH }}
 
 
 
@@ -189,12 +195,13 @@ jobs:
         with:
           name: sbom-docker
           path: sbom.spdx.json
-      - name: Attest SBOM for Docker image
-        uses: advanced-security/attest-sbom-action@v1  # Poprawna akcja
-        with:
-          subject-image: s20769/test-app:${{ needs.calculate-version.outputs.version }}
-          sbom-path: sbom.spdx.json
-          sbom-format: spdx-json  # Upewnij się, że format zgadza się z wyjściem Syft
+      - name: Attest SBOM for Docker (Keyless)
+        run: |
+          cosign attest \
+          --yes \
+          --type spdxjson \
+          --predicate sbom.spdx.json \
+          s20769/test-app:${{ needs.calculate-version.outputs.version }}
 
           
   trigger-deploy:
