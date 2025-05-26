@@ -120,7 +120,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DepCheck report
-          path: ${{github.workspace}}/reports
+          path: ${{github.workspace}}/*.zip
 
 
   docker:
